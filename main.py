@@ -107,9 +107,9 @@ def buscar_profesor(matricula: str, dia: str):
 async def inicio(request: Request):
 
     return templates.TemplateResponse(
-        request=request,
-        name="index.html",
-        context={
+        "index.html",
+        {
+            "request": request,
             "resultados": None
         }
     )
@@ -124,10 +124,10 @@ async def buscar(
 
     clases = buscar_profesor(matricula, dia)
 
-   return templates.TemplateResponse(
-    request=request,
-    name="index.html",
-        context={
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
             "matricula": matricula.upper(),
             "dia": dia.capitalize(),
             "resultados": clases
