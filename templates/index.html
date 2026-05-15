@@ -23,7 +23,7 @@
             background: white;
             border-radius: 16px;
             padding: 22px;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
         }
 
         .logo {
@@ -60,10 +60,6 @@
             cursor: pointer;
         }
 
-        button:hover {
-            opacity: 0.95;
-        }
-
         .tarjeta {
             margin-top: 14px;
             padding: 14px;
@@ -90,7 +86,7 @@
     <div class="container">
 
         <div class="logo">
-            <img src="/static/UDL_LogotipoColor.png" alt="Logo UDL">
+            <img src="/static/UDL_LogotipoColor.png" alt="Logo">
         </div>
 
         <h2>📍 BITÁCORA DIGITAL</h2>
@@ -100,7 +96,7 @@
             <input
                 type="text"
                 name="matricula"
-                placeholder="Matrícula (ej. 2101 o A38)"
+                placeholder="Matrícula"
                 required
             >
 
@@ -113,7 +109,9 @@
                 <option value="viernes">Viernes</option>
             </select>
 
-            <button type="submit">Buscar</button>
+            <button type="submit">
+                Buscar
+            </button>
 
         </form>
 
@@ -124,19 +122,19 @@
                 <div class="tarjeta">
 
                     <div>
-                        ⏰ <strong>{{ r["hora"] }}</strong>
+                        ⏰ <strong>{{ r.hora }}</strong>
                     </div>
 
                     <div>
-                        🏫 Salón <strong>{{ r["aula"] }}</strong>
+                        🏫 Salón <strong>{{ r.aula }}</strong>
                     </div>
 
                     <div>
-                        👥 Grupo <strong>{{ r["grupo"] }}</strong>
+                        👥 Grupo <strong>{{ r.grupo }}</strong>
                     </div>
 
                     <div>
-                        🎓 <strong>{{ r["licenciatura"] }}</strong>
+                        🎓 <strong>{{ r.licenciatura }}</strong>
                     </div>
 
                 </div>
@@ -152,12 +150,6 @@
         {% endif %}
 
     </div>
-
-    <script>
-        if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("/static/sw.js");
-        }
-    </script>
 
 </body>
 
