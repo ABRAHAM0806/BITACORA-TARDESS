@@ -89,14 +89,12 @@
 
     <div class="container">
 
-        <!-- LOGO -->
         <div class="logo">
             <img src="/static/UDL_LogotipoColor.png" alt="Logo UDL">
         </div>
 
         <h2>📍 BITÁCORA DIGITAL</h2>
 
-        <!-- FORMULARIO -->
         <form method="post" action="/buscar">
 
             <input
@@ -119,30 +117,29 @@
 
         </form>
 
-        <!-- RESULTADOS -->
         {% if resultados %}
 
             {% for r in resultados %}
 
-            <div class="tarjeta">
+                <div class="tarjeta">
 
-                <div>
-                    ⏰ <strong>{{ r.hora }}</strong>
+                    <div>
+                        ⏰ <strong>{{ r["hora"] }}</strong>
+                    </div>
+
+                    <div>
+                        🏫 Salón <strong>{{ r["aula"] }}</strong>
+                    </div>
+
+                    <div>
+                        👥 Grupo <strong>{{ r["grupo"] }}</strong>
+                    </div>
+
+                    <div>
+                        🎓 <strong>{{ r["licenciatura"] }}</strong>
+                    </div>
+
                 </div>
-
-                <div>
-                    🏫 Salón <strong>{{ r.aula }}</strong>
-                </div>
-
-                <div>
-                    👥 Grupo <strong>{{ r.grupo }}</strong>
-                </div>
-
-                <div>
-                    🎓 <strong>{{ r.licenciatura }}</strong>
-                </div>
-
-            </div>
 
             {% endfor %}
 
