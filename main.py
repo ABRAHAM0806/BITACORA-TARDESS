@@ -1,13 +1,15 @@
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFileS
+from fastapi.staticfiles import StaticFiles
 import pandas as pd
 
 app = FastAPI()
 
+# ====== STATIC ======
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# ====== TEMPLATES ======
 templates = Jinja2Templates(directory="templates")
 
 # ====== ARCHIVOS ======
@@ -28,20 +30,26 @@ ARCHIVOS = [
 
 # ====== UTIL ======
 def normalizar(valor):
+
     if pd.isna(valor):
         return ""
+
     return str(valor).strip().upper()
 
 
 def hora_a_minutos(hora: str) -> int:
+
     h, m = hora.split(":")
+
     return int(h) * 60 + int(m)
 
 
 # ====== LOGICA PRINCIPAL ======
 def buscar_profesor(matricula: str, dia: str):
+
     matricula = normalizar(matricula)
     dia = dia.lower()
+
     resultados = []
 
     for info in ARCHIVOS:
@@ -50,9 +58,11 @@ def buscar_profesor(matricula: str, dia: str):
             continue
 
         col_inicio, col_fin = info["dias"][dia]
+
         horas = info["horas"]
 
         try:
+
             df = pd.read_excel(
                 info["file"],
                 sheet_name=info["sheet"],
@@ -60,7 +70,9 @@ def buscar_profesor(matricula: str, dia: str):
             )
 
         except Exception as e:
+
             print(f"Error leyendo {info['file']} - {e}")
+
             continue
 
         for fila in range(4, 68):
@@ -82,21 +94,21 @@ def buscar_profesor(matricula: str, dia: str):
                         "licenciatura": licenciatura
                     })
 
-    resultados.sort(key=lambda x: hora_a_minutos(x["hora"]))
+    resultados.sort(
+        key=lambda x: hora_a_minutos(x["hora"])
+    )
 
     return resultados
 
 
 # ====== RUTAS ======
 
-
 @app.get("/", response_class=HTMLResponse)
-def inicio(request: Request):
+async def inicio(request: Request):
 
     return templates.TemplateResponse(
-        request=request,
-        name="index.html",
-        context={
+        "index.html",
+        {
             "request": request,
             "resultados": None
         }
@@ -104,7 +116,7 @@ def inicio(request: Request):
 
 
 @app.post("/buscar", response_class=HTMLResponse)
-def buscar(
+async def buscar(
     request: Request,
     matricula: str = Form(...),
     dia: str = Form(...)
@@ -113,9 +125,8 @@ def buscar(
     clases = buscar_profesor(matricula, dia)
 
     return templates.TemplateResponse(
-        request=request,
-        name="index.html",
-        context={
+        "index.html",
+        {
             "request": request,
             "matricula": matricula.upper(),
             "dia": dia.capitalize(),
