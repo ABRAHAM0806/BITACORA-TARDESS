@@ -84,8 +84,6 @@ def buscar_profesor(matricula: str, dia: str):
 # ====== RUTAS ======
 
 
-# ====== RUTAS ======
-
 @app.get("/", response_class=HTMLResponse)
 def inicio(request: Request):
     return templates.TemplateResponse(
@@ -98,11 +96,7 @@ def inicio(request: Request):
 
 
 @app.post("/buscar", response_class=HTMLResponse)
-def buscar(
-    request: Request,
-    matricula: str = Form(...),
-    dia: str = Form(...)
-):
+def buscar(request: Request, matricula: str = Form(...), dia: str = Form(...)):
     clases = buscar_profesor(matricula, dia)
 
     return templates.TemplateResponse(
