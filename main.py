@@ -86,7 +86,10 @@ def buscar_profesor(matricula: str, dia: str):
 def inicio(request: Request):
     return templates.TemplateResponse(
         "index.html",
-        {"request": request, "resultados": None}
+        {
+            "request": request,
+            "resultados": None
+        }
     )
 
 
