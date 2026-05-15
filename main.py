@@ -89,6 +89,7 @@ def buscar_profesor(matricula: str, dia: str):
 
 # ====== RUTAS ======
 
+
 @app.get("/", response_class=HTMLResponse)
 def inicio(request: Request):
 
