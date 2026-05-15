@@ -7,6 +7,7 @@ import pandas as pd
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
 templates = Jinja2Templates(directory="templates")
 
 # ====== ARCHIVOS ======
@@ -14,7 +15,7 @@ ARCHIVOS = [
     {
         "file": "bitacora tarde.xlsx",
         "sheet": "concentrado nocturno",
-        "horas": ["4:00", "5:00", "6:00", "7:00", "8:00", "9:00"],
+        "horas": ["4:00", "5:00", "6:00", "7:00", "8:00"],
         "dias": {
             "lunes": (4, 8),
             "martes": (9, 13),
@@ -22,9 +23,8 @@ ARCHIVOS = [
             "jueves": (19, 23),
             "viernes": (24, 28),
         }
-    },]
-    
-   
+    }
+]
 
 # ====== UTIL ======
 def normalizar(valor):
@@ -38,7 +38,6 @@ def hora_a_minutos(hora: str) -> int:
     return int(h) * 60 + int(m)
 
 
-
 # ====== LOGICA PRINCIPAL ======
 def buscar_profesor(matricula: str, dia: str):
     matricula = normalizar(matricula)
@@ -46,6 +45,7 @@ def buscar_profesor(matricula: str, dia: str):
     resultados = []
 
     for info in ARCHIVOS:
+
         if dia not in info["dias"]:
             continue
 
@@ -53,20 +53,28 @@ def buscar_profesor(matricula: str, dia: str):
         horas = info["horas"]
 
         try:
-            df = pd.read_excel(info["file"], sheet_name=info["sheet"], header=None)
+            df = pd.read_excel(
+                info["file"],
+                sheet_name=info["sheet"],
+                header=None
+            )
+
         except Exception as e:
             print(f"Error leyendo {info['file']} - {e}")
             continue
 
         for fila in range(4, 68):
+
             aula = normalizar(df.iloc[fila, 0])
             grupo = normalizar(df.iloc[fila, 1])
             licenciatura = normalizar(df.iloc[fila, 2])
 
             for i, col in enumerate(range(col_inicio, col_fin + 1)):
+
                 celda = normalizar(df.iloc[fila, col])
 
                 if celda == matricula and i < len(horas):
+
                     resultados.append({
                         "hora": horas[i],
                         "aula": aula,
@@ -74,21 +82,20 @@ def buscar_profesor(matricula: str, dia: str):
                         "licenciatura": licenciatura
                     })
 
-    # ordenar por hora (string funciona bien aquí)
     resultados.sort(key=lambda x: hora_a_minutos(x["hora"]))
-
 
     return resultados
 
 
 # ====== RUTAS ======
 
-
 @app.get("/", response_class=HTMLResponse)
 def inicio(request: Request):
+
     return templates.TemplateResponse(
-        "index.html",
-        {
+        request=request,
+        name="index.html",
+        context={
             "request": request,
             "resultados": None
         }
@@ -96,12 +103,18 @@ def inicio(request: Request):
 
 
 @app.post("/buscar", response_class=HTMLResponse)
-def buscar(request: Request, matricula: str = Form(...), dia: str = Form(...)):
+def buscar(
+    request: Request,
+    matricula: str = Form(...),
+    dia: str = Form(...)
+):
+
     clases = buscar_profesor(matricula, dia)
 
     return templates.TemplateResponse(
-        "index.html",
-        {
+        request=request,
+        name="index.html",
+        context={
             "request": request,
             "matricula": matricula.upper(),
             "dia": dia.capitalize(),
